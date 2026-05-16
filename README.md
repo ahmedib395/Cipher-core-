@@ -134,9 +134,4 @@ Follow the prompts to enter keys and a message.
 
 ## 📄 License
 
-This project was built for educational purposes as a data security coursework project. Feel free to fork and extend it.
-
----
-
-## 👤 Author
-https://github.com/ahmedib395
+This project was built for educational purposes as a data security coursework project. Feel free to fork and extend 
