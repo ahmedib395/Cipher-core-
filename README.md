@@ -139,5 +139,4 @@ This project was built for educational purposes as a data security coursework pr
 ---
 
 ## 👤 Author
-
-> Add your name, GitHub profile link, and course/institution here.
+https://github.com/ahmedib395
