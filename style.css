@@ -925,6 +925,75 @@ textarea:focus {
   .hero-title { font-size: 2rem; }
 }
 
+/* ─── Mobile Fixes (phones) ─── */
+@media (max-width: 480px) {
+
+  /* Header — hide clock to save space */
+  .hud-time { display: none; }
+  .hud-status { gap: 0.4rem; }
+  .hud-logo { font-size: 0.9rem; }
+
+  /* Hero — tighter spacing */
+  .hero {
+    padding: 3rem 1.2rem 1.5rem;
+    gap: 1.5rem;
+  }
+  .hero-tag { font-size: 0.7rem; }
+  .hero-title { font-size: 1.7rem; line-height: 1.1; }
+  .hero-sub { font-size: 0.85rem; }
+  .hero-badges { gap: 0.4rem; }
+  .badge { font-size: 0.65rem; padding: 4px 10px; }
+
+  /* Cipher animated box — smaller on phone */
+  .cipher-box { padding: 1rem; }
+  .cipher-line { font-size: 0.62rem; }
+
+  /* Algo cards — full padding fix */
+  .algo-info { padding: 0.5rem 1rem 2rem; gap: 1rem; }
+  .algo-card { padding: 1.2rem; }
+  .algo-card h3 { font-size: 0.78rem; }
+  .formula { font-size: 0.72rem; padding: 0.5rem 0.7rem; }
+  .algo-card p { font-size: 0.78rem; }
+
+  /* Panels — full width, proper padding */
+  .panels-container { padding: 0 1rem 2.5rem; gap: 1.2rem; }
+  .panel-header { padding: 1rem 1.2rem 0; }
+  .panel-body { padding: 1.2rem; }
+  .panel-title { font-size: 0.9rem; }
+
+  /* Key grid — stack into 3 columns but smaller */
+  .key-grid { grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
+  .control-value-input { width: 48px; font-size: 0.9rem; }
+
+  /* Rotary dial — smaller */
+  .rotary-dial { width: 54px; height: 54px; }
+  .dial-indicator { height: 9px; width: 3px; }
+
+  /* Textarea */
+  textarea { font-size: 0.78rem; padding: 0.6rem 0.8rem; }
+
+  /* Buttons */
+  .action-btn { font-size: 0.75rem; padding: 0.8rem 1rem; letter-spacing: 0.1em; }
+
+  /* Output box */
+  .output-box { font-size: 0.72rem; }
+  #dec-output { font-size: 0.88rem; }
+  .output-meta { gap: 0.5rem; font-size: 0.6rem; }
+
+  /* Demo section */
+  .demo-section { padding: 1.5rem 1rem 2.5rem; }
+  .section-title { font-size: 1rem; }
+  .demo-btn { font-size: 0.75rem; padding: 0.7rem 1.5rem; }
+  .demo-step { padding: 1rem 1.2rem; font-size: 0.74rem; }
+
+  /* Footer */
+  .hud-footer { padding: 1rem 1.2rem; }
+  .footer-inner { flex-direction: column; gap: 0.4rem; text-align: center; }
+
+  /* Success text smaller */
+  .success-text { font-size: 2.2rem; letter-spacing: 0.1em; }
+}
+
 /* ─── Success Animation Overlays ─── */
 .success-overlay {
   position: fixed;
@@ -1001,4 +1070,3 @@ body.glitch-flash {
   60% { transform: translateX(-2px); }
   100% { filter: none; transform: none; }
 }
-
