@@ -1016,11 +1016,14 @@ textarea:focus {
 .success-text {
   position: relative;
   font-family: var(--font-orb);
-  font-size: 4rem;
+  font-size: clamp(1.4rem, 8vw, 4rem);
   font-weight: 900;
   color: #fff;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.05em;
   text-align: center;
+  padding: 0 1rem;
+  width: 100%;
+  word-break: break-word;
   text-shadow: 0 0 20px var(--green), 0 0 40px var(--green), 0 0 80px #fff;
   opacity: 0;
   transform: scale(0.8);
