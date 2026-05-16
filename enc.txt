@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+#include <bitset>
+
+int encryptValue(int val, int k1, int k2, int k3) {
+    int step1 = (val + k1) % 32;
+    int step2 = (step1 * k2) % 32;
+    int step3 = (step2 + k3) % 32;
+    return step3;
+}
+
+int main() {
+    int k1, k2, k3;
+
+    std::cout << "=== ENCRYPTION ===\n\n";
+
+    std::cout << "Enter k1 (any integer): ";
+    std::cin >> k1;
+
+    std::cout << "Enter k2 (must be ODD - e.g. 3,5,7,9,11...): ";
+    std::cin >> k2;
+    if (k2 % 2 == 0) {
+        std::cerr << "Error: k2 must be odd!\n";
+        return 1;
+    }
+
+    std::cout << "Enter k3 (any integer): ";
+    std::cin >> k3;
+    std::cin.ignore();
+
+    std::string plaintext;
+    std::cout << "\nEnter sentence to encrypt: ";
+    std::getline(std::cin, plaintext);
+
+    std::string bitstream = "";
+    for (char c : plaintext) {
+        if (c == ' ') {
+            // Space = special 6-bit code "100000"
+            // This can NEVER appear from a 5-bit letter (letters produce 00000–11111)
+            // because we always write letters as exactly 5 bits prefixed by 0
+            // We distinguish by length: letters=5 bits, space=6 bits
+            bitstream += "100000";
+        } else if (std::isalpha(c)) {
+            int val = std::toupper(c) - 'A';
+            int enc = encryptValue(val, k1, k2, k3);
+            // Letter: prefix with "0" then 5 bits = 6 bits total
+            bitstream += "0";
+            bitstream += std::bitset<5>(enc).to_string();
+        }
+    }
+
+    std::cout << "\n[Encrypted bitstream — copy this]\n";
+    std::cout << "──────────────────────────────────────────\n";
+    std::cout << bitstream << "\n";
+    std::cout << "──────────────────────────────────────────\n";
+    std::cout << "Keys: k1=" << k1 << "  k2=" << k2 << "  k3=" << k3 << "\n";
+
+    return 0;
+}

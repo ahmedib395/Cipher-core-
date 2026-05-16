@@ -1,0 +1,84 @@
+#include <iostream>
+#include <string>
+#include <stdexcept>
+
+int modInverse(int a, int m) {
+    a = ((a % m) + m) % m;
+    for (int x = 1; x < m; x++)
+        if ((a * x) % m == 1)
+            return x;
+    throw std::invalid_argument("k2 has no modular inverse. It must be odd.");
+}
+
+int decryptValue(int val, int k1, int k2, int k3) {
+    int k2_inv = modInverse(k2, 32);
+    int step1  = ((val - k3) % 32 + 32) % 32;
+    int step2  = (step1 * k2_inv) % 32;
+    int step3  = ((step2 - k1) % 32 + 32) % 32;
+    return step3;
+}
+
+int main() {
+    int k1, k2, k3;
+
+    std::cout << "=== DECRYPTION ===\n\n";
+
+    std::cout << "Enter k1: ";
+    std::cin >> k1;
+    std::cout << "Enter k2: ";
+    std::cin >> k2;
+    std::cout << "Enter k3: ";
+    std::cin >> k3;
+    std::cin.ignore();
+
+    try {
+        modInverse(k2, 32);
+    } catch (const std::exception& e) {
+        std::cerr << "Key error: " << e.what() << "\n";
+        return 1;
+    }
+
+    std::string bitstream;
+    std::cout << "\nPaste the bitstream: ";
+    std::getline(std::cin, bitstream);
+
+    // Validate: only 0s and 1s
+    for (char c : bitstream) {
+        if (c != '0' && c != '1') {
+            std::cerr << "Error: bitstream must contain only 0s and 1s.\n";
+            return 1;
+        }
+    }
+
+    std::cout << "\n[Decrypted sentence]: ";
+
+    int i = 0;
+    while (i < (int)bitstream.size()) {
+        if (bitstream[i] == '1') {
+            // Space marker: next 5 bits are "00000", consume all 6
+            if (i + 6 > (int)bitstream.size()) {
+                std::cerr << "\nError: incomplete space token.\n";
+                return 1;
+            }
+            std::cout << ' ';
+            i += 6;
+        } else {
+            // Letter: leading '0' + 5 data bits = 6 bits total
+            if (i + 6 > (int)bitstream.size()) {
+                std::cerr << "\nError: incomplete letter token.\n";
+                return 1;
+            }
+            std::string chunk = bitstream.substr(i + 1, 5); // skip leading '0'
+            int val = std::stoi(chunk, nullptr, 2);
+            int dec = decryptValue(val, k1, k2, k3);
+            if (dec >= 0 && dec <= 25)
+                std::cout << (char)('A' + dec);
+            else
+                std::cout << '?';
+            i += 6;
+        }
+    }
+
+    std::cout << "\n";
+    return 0;
+}

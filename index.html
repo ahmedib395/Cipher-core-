@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CipherCore | Data Security Suite</title>
+  <meta name="description" content="Military-grade bitstream encryption and decryption using a triple-key affine cipher system. CipherCore data security suite."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- Matrix Rain Canvas -->
+  <canvas id="matrix-canvas"></canvas>
+
+  <!-- Scan line overlay -->
+  <div class="scanlines"></div>
+
+  <!-- Top HUD Bar -->
+  <header class="hud-header">
+    <div class="hud-logo">
+      <span class="logo-bracket">[</span>
+      <span class="logo-text">CIPHER<span class="logo-accent">CORE</span></span>
+      <span class="logo-bracket">]</span>
+    </div>
+    <div class="hud-status">
+      <span class="status-dot active"></span>
+      <span class="status-label">SYSTEM ONLINE</span>
+      <span class="hud-time" id="hud-clock">00:00:00</span>
+    </div>
+    <div class="hud-right">
+      <span class="sec-badge">SEC-LVL: <strong>ALPHA</strong></span>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-tag">&gt;_ TRIPLE-KEY AFFINE BITSTREAM CIPHER</p>
+      <h1 class="hero-title">DATA SECURITY<br/><span class="title-accent">SUITE</span></h1>
+      <p class="hero-sub">Encrypt & Decrypt messages using a three-parameter affine cipher<br/>operating over a 32-symbol modular field — converted to raw bitstreams.</p>
+      <div class="hero-badges">
+        <span class="badge">⚡ Modular Arithmetic</span>
+        <span class="badge">🔐 Affine Cipher</span>
+        <span class="badge">📡 Bitstream Output</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="cipher-box">
+        <div class="cipher-line" id="anim-line-1"></div>
+        <div class="cipher-line" id="anim-line-2"></div>
+        <div class="cipher-line" id="anim-line-3"></div>
+        <div class="cipher-line" id="anim-line-4"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Algorithm Info Cards -->
+  <section class="algo-info">
+    <div class="algo-card">
+      <div class="algo-icon">⚙</div>
+      <h3>Encryption Formula</h3>
+      <div class="formula">E(x) = ((x + k1) × k2 + k3) mod 32</div>
+      <p>Each letter is shifted by k1, scaled by k2 (must be odd), then shifted again by k3. The result is encoded as a 6-bit token in the bitstream.</p>
+    </div>
+    <div class="algo-card">
+      <div class="algo-icon">🔓</div>
+      <h3>Decryption Formula</h3>
+      <div class="formula">D(y) = ((y - k3) × k2⁻¹ - k1) mod 32</div>
+      <p>Reverses encryption using the modular inverse of k2 (mod 32). Spaces are encoded as the special token <code>100000</code> in the bitstream.</p>
+    </div>
+    <div class="algo-card">
+      <div class="algo-icon">📡</div>
+      <h3>Bitstream Encoding</h3>
+      <div class="formula">Letter → 0[5-bits] | Space → 100000</div>
+      <p>Every character becomes exactly 6 bits. Letters are prefixed with <code>0</code>; spaces use the reserved code <code>100000</code> which is unambiguous.</p>
+    </div>
+  </section>
+
+  <!-- Main Cipher Panels -->
+  <main class="panels-container">
+
+    <!-- ENCRYPTION PANEL -->
+    <div class="panel" id="enc-panel">
+      <div class="panel-header">
+        <div class="panel-title-row">
+          <span class="panel-icon">🔒</span>
+          <h2 class="panel-title">ENCRYPT</h2>
+          <span class="panel-tag">ENC_MODULE_v2</span>
+        </div>
+        <div class="panel-progress" id="enc-progress-bar"></div>
+      </div>
+
+      <div class="panel-body">
+        <div class="key-grid">
+          <!-- K1 Slider -->
+          <div class="key-field control-slider-wrap">
+            <div class="control-header">
+              <label>K1 <span class="key-hint">any integer</span></label>
+              <input type="number" class="control-value-input" id="enc-k1-display" value="3" />
+            </div>
+            <div class="slider-container">
+              <input type="range" id="enc-k1" class="neon-slider k1-slider" min="0" max="31" value="3"/>
+              <div class="slider-glow-layer"></div>
+            </div>
+          </div>
+          
+          <!-- K2 Rotary Dial -->
+          <div class="key-field control-dial-wrap">
+            <div class="control-header">
+              <label>K2 <span class="key-hint">must be ODD</span></label>
+              <input type="number" class="control-value-input dial-display" id="enc-k2-display" value="7" />
+            </div>
+            <div class="rotary-dial" id="enc-k2-dial" data-value="7">
+              <div class="dial-ring"></div>
+              <div class="dial-knob">
+                <div class="dial-indicator"></div>
+              </div>
+              <div class="dial-sparks"></div>
+            </div>
+            <input type="hidden" id="enc-k2" value="7"/>
+          </div>
+
+          <!-- K3 Slider -->
+          <div class="key-field control-slider-wrap">
+            <div class="control-header">
+              <label>K3 <span class="key-hint">any integer</span></label>
+              <input type="number" class="control-value-input" id="enc-k3-display" value="5" />
+            </div>
+            <div class="slider-container">
+              <input type="range" id="enc-k3" class="neon-slider k3-slider" min="0" max="31" value="5"/>
+              <div class="slider-glow-layer"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="enc-input">PLAINTEXT MESSAGE</label>
+          <textarea id="enc-input" rows="4" placeholder="Enter your secret message here... (letters and spaces only)"></textarea>
+          <div class="char-counter"><span id="enc-char-count">0</span> characters</div>
+        </div>
+
+        <button class="action-btn encrypt-btn" id="enc-btn" onclick="runEncrypt()">
+          <span class="btn-icon">⚡</span>
+          <span class="btn-text">ENCRYPT MESSAGE</span>
+          <span class="btn-shimmer"></span>
+        </button>
+
+        <div class="output-group" id="enc-output-group" style="display:none;">
+          <div class="output-label-row">
+            <label>ENCRYPTED BITSTREAM</label>
+            <button class="copy-btn" onclick="copyText('enc-output', this)">⎘ COPY</button>
+          </div>
+          <div class="output-box" id="enc-output"></div>
+          <div class="output-meta" id="enc-meta"></div>
+        </div>
+
+        <div class="error-box" id="enc-error" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- DECRYPTION PANEL -->
+    <div class="panel" id="dec-panel">
+      <div class="panel-header dec-header">
+        <div class="panel-title-row">
+          <span class="panel-icon">🔓</span>
+          <h2 class="panel-title">DECRYPT</h2>
+          <span class="panel-tag">DEC_MODULE_v2</span>
+        </div>
+        <div class="panel-progress dec-progress" id="dec-progress-bar"></div>
+      </div>
+
+      <div class="panel-body">
+        <div class="key-grid">
+          <!-- K1 Slider -->
+          <div class="key-field control-slider-wrap">
+            <div class="control-header">
+              <label>K1 <span class="key-hint">any integer</span></label>
+              <input type="number" class="control-value-input" id="dec-k1-display" value="3" />
+            </div>
+            <div class="slider-container">
+              <input type="range" id="dec-k1" class="neon-slider k1-slider dec-slider" min="0" max="31" value="3"/>
+              <div class="slider-glow-layer dec-glow"></div>
+            </div>
+          </div>
+          
+          <!-- K2 Rotary Dial -->
+          <div class="key-field control-dial-wrap">
+            <div class="control-header">
+              <label>K2 <span class="key-hint">must be ODD</span></label>
+              <input type="number" class="control-value-input dial-display" id="dec-k2-display" value="7" />
+            </div>
+            <div class="rotary-dial dec-dial" id="dec-k2-dial" data-value="7">
+              <div class="dial-ring"></div>
+              <div class="dial-knob">
+                <div class="dial-indicator"></div>
+              </div>
+              <div class="dial-sparks"></div>
+            </div>
+            <input type="hidden" id="dec-k2" value="7"/>
+          </div>
+
+          <!-- K3 Slider -->
+          <div class="key-field control-slider-wrap">
+            <div class="control-header">
+              <label>K3 <span class="key-hint">any integer</span></label>
+              <input type="number" class="control-value-input" id="dec-k3-display" value="5" />
+            </div>
+            <div class="slider-container">
+              <input type="range" id="dec-k3" class="neon-slider k3-slider dec-slider" min="0" max="31" value="5"/>
+              <div class="slider-glow-layer dec-glow"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="dec-input">BITSTREAM INPUT</label>
+          <textarea id="dec-input" rows="4" placeholder="Paste encrypted bitstream here... (only 0s and 1s)"></textarea>
+          <div class="char-counter"><span id="dec-char-count">0</span> bits</div>
+        </div>
+
+        <button class="action-btn decrypt-btn" id="dec-btn" onclick="runDecrypt()">
+          <span class="btn-icon">🔓</span>
+          <span class="btn-text">DECRYPT BITSTREAM</span>
+          <span class="btn-shimmer"></span>
+        </button>
+
+        <div class="output-group" id="dec-output-group" style="display:none;">
+          <div class="output-label-row">
+            <label>DECRYPTED MESSAGE</label>
+            <button class="copy-btn" onclick="copyText('dec-output', this)">⎘ COPY</button>
+          </div>
+          <div class="output-box" id="dec-output"></div>
+          <div class="output-meta" id="dec-meta"></div>
+        </div>
+
+        <div class="error-box" id="dec-error" style="display:none;"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Live Demo Section -->
+  <section class="demo-section">
+    <h2 class="section-title"><span class="acc">&gt;_</span> LIVE DEMONSTRATION</h2>
+    <p class="section-sub">Watch the algorithm in action. Click the button to auto-encrypt a sample message and then instantly decrypt it.</p>
+    <button class="demo-btn" onclick="runDemo()">
+      <span>▶ RUN FULL PIPELINE DEMO</span>
+    </button>
+    <div class="demo-output" id="demo-output" style="display:none;">
+      <div class="demo-step" id="demo-step-1"></div>
+      <div class="demo-arrow">▼</div>
+      <div class="demo-step" id="demo-step-2"></div>
+      <div class="demo-arrow">▼</div>
+      <div class="demo-step" id="demo-step-3"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="hud-footer">
+    <div class="footer-inner">
+      <span class="footer-logo">[CIPHERCORE]</span>
+      <span class="footer-mid">Triple-Key Affine Bitstream Cipher — Data Security Suite</span>
+      <span class="footer-right">MOD 32 FIELD</span>
+    </div>
+  </footer>
+
+  <!-- Success Animation Overlays -->
+  <div id="success-overlay" class="success-overlay" style="display:none;">
+    <canvas id="success-canvas"></canvas>
+    <div class="success-text" id="success-text">ENCRYPTION SUCCESSFUL</div>
+    <div class="ripple-ring" id="ripple-ring"></div>
+  </div>
+
+  <script src="cipher.js"></script>
+</body>
+</html>
